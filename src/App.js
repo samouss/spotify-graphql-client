@@ -1,18 +1,66 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-relay';
 import styled from 'styled-components';
+import { Duration } from 'luxon';
 import GraphQL from './GraphQL';
 import Title from './components/Title';
 import './App.css';
 
 const Summary = styled.article`
-  text-align: center;
-  margin-top: 25px;
+  margin-bottom: 50px;
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const Description = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const Portrait = styled.img`
   border: 5px solid #ffffff;
 `;
+
+const Collection = styled.section`
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const TopTracks = styled.ol`
+  list-style: none;
+  flex: 1;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 20px;
+`;
+
+const TopTrack = styled.li`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const TopTrackIndex = styled.span`
+  margin-left: 10px;
+`;
+
+const TopTrackName = styled.span`
+  margin-left: 20px;
+  flex: 1;
+`;
+
+const TopTrackPicture = styled.img`
+  width: 50px;
+  height: auto;
+`;
+
+const Time = ({ milliseconds, children, format = 'm:ss' }) =>
+  children(Duration.fromMillis(milliseconds).toFormat(format));
 
 class App extends Component {
   render() {
@@ -38,7 +86,7 @@ class App extends Component {
                     width
                     height
                   }
-                  tracks(first: 25) {
+                  tracks {
                     nodes {
                       id
                       name
@@ -52,7 +100,7 @@ class App extends Component {
               topTracks(market: "FR") {
                 id
                 name
-                popularity
+                durationMS
                 album {
                   images {
                     url
@@ -79,37 +127,46 @@ class App extends Component {
           return (
             <section>
               <Summary>
-                <Title>{props.artist.name}</Title>
-                <Portrait
-                  src={props.artist.images[1].url}
-                  alt={props.artist.name}
-                />
+                <Title center>{props.artist.name}</Title>
+                <Description>
+                  <Portrait
+                    src={props.artist.images[1].url}
+                    alt={props.artist.name}
+                  />
+                  <TopTracks>
+                    {props.artist.topTracks.slice(0, 5).map((track, index) => (
+                      <TopTrack key={track.id}>
+                        <TopTrackPicture
+                          src={track.album.images[2].url}
+                          alt={track.name}
+                        />
+                        <TopTrackIndex>{index + 1}</TopTrackIndex>
+                        <TopTrackName>{track.name}</TopTrackName>
+                        <Time milliseconds={track.durationMS}>
+                          {value => <span>{value}</span>}
+                        </Time>
+                      </TopTrack>
+                    ))}
+                  </TopTracks>
+                </Description>
               </Summary>
 
-              <Title small>Popular</Title>
-              <ul>
-                {props.artist.topTracks.map(track => (
-                  <li key={track.id}>
-                    <img src={track.album.images[2].url} alt={track.name} />
-                    {track.name}
-                  </li>
-                ))}
-              </ul>
-
-              <Title small>Albums</Title>
-              <ul>
-                {props.artist.albums.nodes.map(album => (
-                  <li key={album.id}>
-                    <img src={album.images[2].url} alt={album.name} />
-                    {album.name}
-                    <ul>
-                      {album.tracks.nodes.map(track => (
-                        <li key={track.id}>{track.name}</li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
+              <Collection>
+                <Title small>Albums</Title>
+                <ul>
+                  {props.artist.albums.nodes.map(album => (
+                    <li key={album.id}>
+                      <img src={album.images[2].url} alt={album.name} />
+                      {album.name}
+                      <ul>
+                        {album.tracks.nodes.map(track => (
+                          <li key={track.id}>{track.name}</li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </Collection>
             </section>
           );
         }}
