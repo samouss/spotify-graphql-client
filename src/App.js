@@ -6,10 +6,18 @@ import GraphQL from './GraphQL';
 import Title from './components/Title';
 import './App.css';
 
+// const MELODY_GARDOT = '2P1puQXmG48EVLBrHbum1J';
+const JIMI_HENDRIX = '776Uo845nYHJpNaStv1Ds4';
+const ARTIST_ID = JIMI_HENDRIX;
+
+const Content = styled.section`
+  max-width: 980px;
+  margin: 0 auto 75px;
+  padding: 0 25px;
+`;
+
 const Summary = styled.article`
-  margin-bottom: 50px;
-  max-width: 800px;
-  margin: 0 auto;
+  margin-bottom: 75px;
 `;
 
 const Description = styled.div`
@@ -17,13 +25,10 @@ const Description = styled.div`
   align-items: center;
 `;
 
-const Portrait = styled.img`
+const Picture = styled.img`
+  width: ${props => (props.small ? 150 : 330)}px;
+  height: ${props => (props.small ? 150 : 330)}px;
   border: 5px solid #ffffff;
-`;
-
-const Collection = styled.section`
-  max-width: 800px;
-  margin: 0 auto;
 `;
 
 const TopTracks = styled.ol`
@@ -59,8 +64,73 @@ const TopTrackPicture = styled.img`
   height: auto;
 `;
 
-const Time = ({ milliseconds, children, format = 'm:ss' }) =>
-  children(Duration.fromMillis(milliseconds).toFormat(format));
+const Section = styled.section``;
+
+const Collection = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const Disc = styled.li`
+  margin-bottom: 50px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const DiscSummary = styled.div`
+  display: flex;
+`;
+
+const DiscInfo = styled.div`
+  margin-left: 20px;
+`;
+
+const DiscYear = styled.p`
+  margin: 0;
+  color: #828282;
+  font-size: 0.85rem;
+`;
+
+const DiscName = styled.h2`
+  margin: 5px 0;
+`;
+
+const DiscTracks = styled.ol`
+  padding: 0;
+  list-style: none;
+  margin-top: 25px;
+`;
+
+const DiscTrack = styled.li`
+  display: flex;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #828282;
+`;
+
+const DiscTrackNumber = styled.span`
+  color: #828282;
+  flex: 0.02;
+`;
+
+const DiscTrackName = styled.span`
+  flex: 1;
+  margin-left: 20px;
+`;
+
+const DiscTrackDuration = styled.span`
+  color: #828282;
+`;
+
+const DiscTrackPopularity = styled.span`
+  color: #828282;
+  margin-left: 20px;
+`;
+
+const Time = ({ value, children, format = 'm:ss' }) =>
+  children(Duration.fromMillis(value).toFormat(format));
 
 class App extends Component {
   render() {
@@ -76,7 +146,7 @@ class App extends Component {
                 width
                 height
               }
-              albums(first: 10) {
+              albums(first: 5) {
                 nodes {
                   id
                   name
@@ -113,7 +183,7 @@ class App extends Component {
           }
         `}
         variables={{
-          artistID: '776Uo845nYHJpNaStv1Ds4',
+          artistID: ARTIST_ID,
         }}
         render={({ error, props }) => {
           if (error) {
@@ -125,11 +195,11 @@ class App extends Component {
           }
 
           return (
-            <section>
+            <Content>
               <Summary>
                 <Title center>{props.artist.name}</Title>
                 <Description>
-                  <Portrait
+                  <Picture
                     src={props.artist.images[1].url}
                     alt={props.artist.name}
                   />
@@ -142,7 +212,7 @@ class App extends Component {
                         />
                         <TopTrackIndex>{index + 1}</TopTrackIndex>
                         <TopTrackName>{track.name}</TopTrackName>
-                        <Time milliseconds={track.durationMS}>
+                        <Time value={track.durationMS}>
                           {value => <span>{value}</span>}
                         </Time>
                       </TopTrack>
@@ -151,23 +221,48 @@ class App extends Component {
                 </Description>
               </Summary>
 
-              <Collection>
+              <Section>
+                {/* @TODO: kind support */}
                 <Title small>Albums</Title>
-                <ul>
+                <Collection>
                   {props.artist.albums.nodes.map(album => (
-                    <li key={album.id}>
-                      <img src={album.images[2].url} alt={album.name} />
-                      {album.name}
-                      <ul>
+                    <Disc key={album.id}>
+                      <DiscSummary>
+                        <Picture
+                          src={album.images[1].url}
+                          alt={album.name}
+                          small
+                        />
+                        <DiscInfo>
+                          {/* @TODO */}
+                          <DiscYear>{album.releaseDate.slice(0, 4)}</DiscYear>
+                          <DiscName>{album.name}</DiscName>
+                        </DiscInfo>
+                      </DiscSummary>
+                      <DiscTracks>
+                        {/* @TODO: disc support */}
                         {album.tracks.nodes.map(track => (
-                          <li key={track.id}>{track.name}</li>
+                          <DiscTrack key={track.id}>
+                            <DiscTrackNumber>
+                              {track.trackNumber}
+                            </DiscTrackNumber>
+                            <DiscTrackName>{track.name}</DiscTrackName>
+                            <DiscTrackDuration>
+                              <Time value={track.durationMS}>
+                                {value => value}
+                              </Time>
+                            </DiscTrackDuration>
+                            <DiscTrackPopularity>
+                              {track.popularity}
+                            </DiscTrackPopularity>
+                          </DiscTrack>
                         ))}
-                      </ul>
-                    </li>
+                      </DiscTracks>
+                    </Disc>
                   ))}
-                </ul>
-              </Collection>
-            </section>
+                </Collection>
+              </Section>
+            </Content>
           );
         }}
       />

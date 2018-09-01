@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 5aaab748ae2818d4b32081314c9d346f
+ * @relayHash 0d690b5001426f7cdf595c748ee11a0d
  */
 
 /* eslint-disable */
@@ -75,7 +75,7 @@ query AppQuery(
       width
       height
     }
-    albums(first: 10) {
+    albums(first: 5) {
       nodes {
         id
         name
@@ -187,12 +187,12 @@ v6 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "albums",
-  "storageKey": "albums(first:10)",
+  "storageKey": "albums(first:5)",
   "args": [
     {
       "kind": "Literal",
       "name": "first",
-      "value": 10,
+      "value": 5,
       "type": "Int"
     }
   ],
@@ -274,7 +274,7 @@ return {
   "operationKind": "query",
   "name": "AppQuery",
   "id": null,
-  "text": "query AppQuery(\n  $artistID: ID!\n) {\n  artist(id: $artistID) {\n    id\n    name\n    images {\n      url\n      width\n      height\n    }\n    albums(first: 10) {\n      nodes {\n        id\n        name\n        releaseDate\n        images {\n          url\n          width\n          height\n        }\n        tracks {\n          nodes {\n            id\n            name\n            popularity\n            durationMS\n            trackNumber\n          }\n        }\n      }\n    }\n    topTracks(market: \"FR\") {\n      id\n      name\n      durationMS\n      album {\n        images {\n          url\n          width\n          height\n        }\n        id\n      }\n    }\n  }\n}\n",
+  "text": "query AppQuery(\n  $artistID: ID!\n) {\n  artist(id: $artistID) {\n    id\n    name\n    images {\n      url\n      width\n      height\n    }\n    albums(first: 5) {\n      nodes {\n        id\n        name\n        releaseDate\n        images {\n          url\n          width\n          height\n        }\n        tracks {\n          nodes {\n            id\n            name\n            popularity\n            durationMS\n            trackNumber\n          }\n        }\n      }\n    }\n    topTracks(market: \"FR\") {\n      id\n      name\n      durationMS\n      album {\n        images {\n          url\n          width\n          height\n        }\n        id\n      }\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -378,5 +378,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4f17aa4c0b17127e04876de0a31205a6';
+(node/*: any*/).hash = '8ceb808a4ff9b707a4002594db961e9e';
 module.exports = node;
