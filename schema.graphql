@@ -46,6 +46,9 @@ type Album {
   """The Spotify ID for the album."""
   id: ID!
 
+  """The cover art for the album in a given size, fallback on largest."""
+  image(size: ImageSize!): Image!
+
   """The cover art for the album in various sizes, widest first."""
   images: [Image!]!
 
@@ -113,6 +116,9 @@ type Artist {
   genres: [String!]!
   href: String!
   id: ID!
+
+  """The cover art for the album in a given size, fallback on largest."""
+  image(size: ImageSize!): Image!
   images: [Image!]!
   name: String!
   popularity: Int!
@@ -157,6 +163,12 @@ type Image {
   url: String!
   width: Int!
   height: Int!
+}
+
+enum ImageSize {
+  S
+  M
+  L
 }
 
 type PageInfo {

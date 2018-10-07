@@ -141,7 +141,7 @@ class App extends Component {
             artist(id: $artistID) {
               id
               name
-              images {
+              image(size: M) {
                 url
                 width
                 height
@@ -151,7 +151,7 @@ class App extends Component {
                   id
                   name
                   releaseDate
-                  images {
+                  image(size: M) {
                     url
                     width
                     height
@@ -172,7 +172,7 @@ class App extends Component {
                 name
                 durationMS
                 album {
-                  images {
+                  image(size: S) {
                     url
                     width
                     height
@@ -200,14 +200,14 @@ class App extends Component {
                 <Title center>{props.artist.name}</Title>
                 <Description>
                   <Picture
-                    src={props.artist.images[1].url}
+                    src={props.artist.image.url}
                     alt={props.artist.name}
                   />
                   <TopTracks>
                     {props.artist.topTracks.slice(0, 5).map((track, index) => (
                       <TopTrack key={track.id}>
                         <TopTrackPicture
-                          src={track.album.images[2].url}
+                          src={track.album.image.url}
                           alt={track.name}
                         />
                         <TopTrackIndex>{index + 1}</TopTrackIndex>
@@ -228,11 +228,7 @@ class App extends Component {
                   {props.artist.albums.nodes.map(album => (
                     <Disc key={album.id}>
                       <DiscSummary>
-                        <Picture
-                          src={album.images[1].url}
-                          alt={album.name}
-                          small
-                        />
+                        <Picture src={album.image.url} alt={album.name} small />
                         <DiscInfo>
                           {/* @TODO */}
                           <DiscYear>{album.releaseDate.slice(0, 4)}</DiscYear>
