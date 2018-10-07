@@ -26,8 +26,8 @@ const Description = styled.div`
 `;
 
 const Picture = styled.img`
-  width: ${props => (props.small ? 150 : 330)}px;
-  height: ${props => (props.small ? 150 : 330)}px;
+  width: ${props => (props.size === 'small' ? 150 : 330)}px;
+  height: ${props => (props.size === 'small' ? 150 : 330)}px;
   border: 5px solid #ffffff;
 `;
 
@@ -230,7 +230,11 @@ class App extends Component {
                   {props.artist.albums.nodes.map(album => (
                     <Disc key={album.id}>
                       <DiscSummary>
-                        <Picture src={album.image.url} alt={album.name} small />
+                        <Picture
+                          src={album.image.url}
+                          alt={album.name}
+                          size="small"
+                        />
                         <DiscInfo>
                           {/* @TODO */}
                           <DiscYear>{album.releaseDate.slice(0, 4)}</DiscYear>
