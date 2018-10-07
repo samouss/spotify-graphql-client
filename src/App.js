@@ -162,6 +162,7 @@ class App extends Component {
                       name
                       popularity
                       durationMS
+                      discNumber
                       trackNumber
                     }
                   }
@@ -236,25 +237,40 @@ class App extends Component {
                           <DiscName>{album.name}</DiscName>
                         </DiscInfo>
                       </DiscSummary>
-                      <DiscTracks>
-                        {/* @TODO: disc support */}
-                        {album.tracks.nodes.map(track => (
-                          <DiscTrack key={track.id}>
-                            <DiscTrackNumber>
-                              {track.trackNumber}
-                            </DiscTrackNumber>
-                            <DiscTrackName>{track.name}</DiscTrackName>
-                            <DiscTrackDuration>
-                              <Time value={track.durationMS}>
-                                {value => value}
-                              </Time>
-                            </DiscTrackDuration>
-                            <DiscTrackPopularity>
-                              {track.popularity}
-                            </DiscTrackPopularity>
+                      {/* @TODO: support both simple / multi disc */}
+                      {Object.entries(
+                        album.tracks.nodes.reduce(
+                          (acc, track) => ({
+                            ...acc,
+                            [track.discNumber]: acc[track.discNumber]
+                              ? acc[track.discNumber].concat(track)
+                              : [track],
+                          }),
+                          {}
+                        )
+                      ).map(([discNumber, tracks]) => (
+                        <DiscTracks key={discNumber}>
+                          <DiscTrack>
+                            <DiscTrackNumber>#{discNumber}</DiscTrackNumber>
                           </DiscTrack>
-                        ))}
-                      </DiscTracks>
+                          {tracks.map(track => (
+                            <DiscTrack key={track.id}>
+                              <DiscTrackNumber>
+                                {track.trackNumber}
+                              </DiscTrackNumber>
+                              <DiscTrackName>{track.name}</DiscTrackName>
+                              <DiscTrackDuration>
+                                <Time value={track.durationMS}>
+                                  {value => value}
+                                </Time>
+                              </DiscTrackDuration>
+                              <DiscTrackPopularity>
+                                {track.popularity}
+                              </DiscTrackPopularity>
+                            </DiscTrack>
+                          ))}
+                        </DiscTracks>
+                      ))}
                     </Disc>
                   ))}
                 </Collection>
