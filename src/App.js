@@ -137,7 +137,7 @@ class App extends Component {
     return (
       <GraphQL
         query={graphql`
-          query AppQuery($artistID: ID!) {
+          query AppQuery($artistID: ID!, $market: String!) {
             artist(id: $artistID) {
               id
               name
@@ -146,7 +146,7 @@ class App extends Component {
                 width
                 height
               }
-              albums(first: 5) {
+              albums(first: 10, market: $market) {
                 nodes {
                   id
                   name
@@ -156,7 +156,7 @@ class App extends Component {
                     width
                     height
                   }
-                  tracks {
+                  tracks(market: $market) {
                     nodes {
                       id
                       name
@@ -167,7 +167,7 @@ class App extends Component {
                   }
                 }
               }
-              topTracks(market: "FR") {
+              topTracks(market: $market) {
                 id
                 name
                 durationMS
@@ -184,6 +184,7 @@ class App extends Component {
         `}
         variables={{
           artistID: ARTIST_ID,
+          market: 'FR',
         }}
         render={({ error, props }) => {
           if (error) {

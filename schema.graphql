@@ -84,7 +84,7 @@ type Album {
   restrictions: Restrictions!
 
   """The tracks of the album."""
-  tracks(first: Int = 10, after: ID): TrackConnection!
+  tracks(first: Int = 50, after: ID, market: String): TrackConnection!
 
   """
   @WEAK: check support for litteral 'album'
@@ -110,7 +110,7 @@ type AlbumEdge {
 }
 
 type Artist {
-  albums(first: Int = 10, after: ID): AlbumConnection!
+  albums(first: Int = 10, after: ID, market: String): AlbumConnection!
   externalURLs: ExternalURLs!
   followers: SpotifyFollowers!
   genres: [String!]!
@@ -125,7 +125,7 @@ type Artist {
   relatedArtists: [Artist!]!
 
   """@WEAK"""
-  topTracks(market: String = "US"): [Track!]!
+  topTracks(market: String!): [Track!]!
 
   """@WEAK: check support for litteral 'artist'"""
   type: String!
