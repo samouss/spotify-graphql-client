@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 0d690b5001426f7cdf595c748ee11a0d
+ * @relayHash 6dfd7e33f57a75e6007b09317c1a8c17
  */
 
 /* eslint-disable */
@@ -10,33 +10,35 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AppQueryVariables = {|
-  artistID: string
+  artistID: string,
+  market: string,
 |};
 export type AppQueryResponse = {|
   +artist: ?{|
     +id: string,
     +name: string,
-    +images: $ReadOnlyArray<{|
+    +image: {|
       +url: string,
       +width: number,
       +height: number,
-    |}>,
+    |},
     +albums: {|
       +nodes: $ReadOnlyArray<{|
         +id: string,
         +name: string,
         +releaseDate: any,
-        +images: $ReadOnlyArray<{|
+        +image: {|
           +url: string,
           +width: number,
           +height: number,
-        |}>,
+        |},
         +tracks: {|
           +nodes: $ReadOnlyArray<{|
             +id: string,
             +name: string,
             +popularity: number,
             +durationMS: number,
+            +discNumber: number,
             +trackNumber: number,
           |}>
         |},
@@ -47,11 +49,11 @@ export type AppQueryResponse = {|
       +name: string,
       +durationMS: number,
       +album: {|
-        +images: $ReadOnlyArray<{|
+        +image: {|
           +url: string,
           +width: number,
           +height: number,
-        |}>
+        |}
       |},
     |}>,
   |}
@@ -66,42 +68,44 @@ export type AppQuery = {|
 /*
 query AppQuery(
   $artistID: ID!
+  $market: String!
 ) {
   artist(id: $artistID) {
     id
     name
-    images {
+    image(size: M) {
       url
       width
       height
     }
-    albums(first: 5) {
+    albums(first: 10, market: $market) {
       nodes {
         id
         name
         releaseDate
-        images {
+        image(size: M) {
           url
           width
           height
         }
-        tracks {
+        tracks(market: $market) {
           nodes {
             id
             name
             popularity
             durationMS
+            discNumber
             trackNumber
           }
         }
       }
     }
-    topTracks(market: "FR") {
+    topTracks(market: $market) {
       id
       name
       durationMS
       album {
-        images {
+        image(size: S) {
           url
           width
           height
@@ -119,6 +123,12 @@ var v0 = [
     "kind": "LocalArgument",
     "name": "artistID",
     "type": "ID!",
+    "defaultValue": null
+  },
+  {
+    "kind": "LocalArgument",
+    "name": "market",
+    "type": "String!",
     "defaultValue": null
   }
 ],
@@ -144,57 +154,72 @@ v3 = {
   "args": null,
   "storageKey": null
 },
-v4 = {
+v4 = [
+  {
+    "kind": "ScalarField",
+    "alias": null,
+    "name": "url",
+    "args": null,
+    "storageKey": null
+  },
+  {
+    "kind": "ScalarField",
+    "alias": null,
+    "name": "width",
+    "args": null,
+    "storageKey": null
+  },
+  {
+    "kind": "ScalarField",
+    "alias": null,
+    "name": "height",
+    "args": null,
+    "storageKey": null
+  }
+],
+v5 = {
   "kind": "LinkedField",
   "alias": null,
-  "name": "images",
-  "storageKey": null,
-  "args": null,
-  "concreteType": "Image",
-  "plural": true,
-  "selections": [
+  "name": "image",
+  "storageKey": "image(size:\"M\")",
+  "args": [
     {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "url",
-      "args": null,
-      "storageKey": null
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "width",
-      "args": null,
-      "storageKey": null
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "height",
-      "args": null,
-      "storageKey": null
+      "kind": "Literal",
+      "name": "size",
+      "value": "M",
+      "type": "ImageSize!"
     }
-  ]
+  ],
+  "concreteType": "Image",
+  "plural": false,
+  "selections": v4
 },
-v5 = {
+v6 = {
+  "kind": "Variable",
+  "name": "market",
+  "variableName": "market",
+  "type": "String"
+},
+v7 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "durationMS",
   "args": null,
   "storageKey": null
 },
-v6 = {
+v8 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "albums",
-  "storageKey": "albums(first:5)",
+  "storageKey": null,
   "args": [
     {
       "kind": "Literal",
       "name": "first",
-      "value": 5,
+      "value": 10,
       "type": "Int"
-    }
+    },
+    v6
   ],
   "concreteType": "AlbumConnection",
   "plural": false,
@@ -217,13 +242,15 @@ v6 = {
           "args": null,
           "storageKey": null
         },
-        v4,
+        v5,
         {
           "kind": "LinkedField",
           "alias": null,
           "name": "tracks",
           "storageKey": null,
-          "args": null,
+          "args": [
+            v6
+          ],
           "concreteType": "TrackConnection",
           "plural": false,
           "selections": [
@@ -245,7 +272,14 @@ v6 = {
                   "args": null,
                   "storageKey": null
                 },
-                v5,
+                v7,
+                {
+                  "kind": "ScalarField",
+                  "alias": null,
+                  "name": "discNumber",
+                  "args": null,
+                  "storageKey": null
+                },
                 {
                   "kind": "ScalarField",
                   "alias": null,
@@ -261,20 +295,37 @@ v6 = {
     }
   ]
 },
-v7 = [
+v9 = [
   {
-    "kind": "Literal",
+    "kind": "Variable",
     "name": "market",
-    "value": "FR",
-    "type": "String"
+    "variableName": "market",
+    "type": "String!"
   }
-];
+],
+v10 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "image",
+  "storageKey": "image(size:\"S\")",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "size",
+      "value": "S",
+      "type": "ImageSize!"
+    }
+  ],
+  "concreteType": "Image",
+  "plural": false,
+  "selections": v4
+};
 return {
   "kind": "Request",
   "operationKind": "query",
   "name": "AppQuery",
   "id": null,
-  "text": "query AppQuery(\n  $artistID: ID!\n) {\n  artist(id: $artistID) {\n    id\n    name\n    images {\n      url\n      width\n      height\n    }\n    albums(first: 5) {\n      nodes {\n        id\n        name\n        releaseDate\n        images {\n          url\n          width\n          height\n        }\n        tracks {\n          nodes {\n            id\n            name\n            popularity\n            durationMS\n            trackNumber\n          }\n        }\n      }\n    }\n    topTracks(market: \"FR\") {\n      id\n      name\n      durationMS\n      album {\n        images {\n          url\n          width\n          height\n        }\n        id\n      }\n    }\n  }\n}\n",
+  "text": "query AppQuery(\n  $artistID: ID!\n  $market: String!\n) {\n  artist(id: $artistID) {\n    id\n    name\n    image(size: M) {\n      url\n      width\n      height\n    }\n    albums(first: 10, market: $market) {\n      nodes {\n        id\n        name\n        releaseDate\n        image(size: M) {\n          url\n          width\n          height\n        }\n        tracks(market: $market) {\n          nodes {\n            id\n            name\n            popularity\n            durationMS\n            discNumber\n            trackNumber\n          }\n        }\n      }\n    }\n    topTracks(market: $market) {\n      id\n      name\n      durationMS\n      album {\n        image(size: S) {\n          url\n          width\n          height\n        }\n        id\n      }\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -294,20 +345,20 @@ return {
         "selections": [
           v2,
           v3,
-          v4,
-          v6,
+          v5,
+          v8,
           {
             "kind": "LinkedField",
             "alias": null,
             "name": "topTracks",
-            "storageKey": "topTracks(market:\"FR\")",
-            "args": v7,
+            "storageKey": null,
+            "args": v9,
             "concreteType": "Track",
             "plural": true,
             "selections": [
               v2,
               v3,
-              v5,
+              v7,
               {
                 "kind": "LinkedField",
                 "alias": null,
@@ -317,7 +368,7 @@ return {
                 "concreteType": "Album",
                 "plural": false,
                 "selections": [
-                  v4
+                  v10
                 ]
               }
             ]
@@ -342,20 +393,20 @@ return {
         "selections": [
           v2,
           v3,
-          v4,
-          v6,
+          v5,
+          v8,
           {
             "kind": "LinkedField",
             "alias": null,
             "name": "topTracks",
-            "storageKey": "topTracks(market:\"FR\")",
-            "args": v7,
+            "storageKey": null,
+            "args": v9,
             "concreteType": "Track",
             "plural": true,
             "selections": [
               v2,
               v3,
-              v5,
+              v7,
               {
                 "kind": "LinkedField",
                 "alias": null,
@@ -365,7 +416,7 @@ return {
                 "concreteType": "Album",
                 "plural": false,
                 "selections": [
-                  v4,
+                  v10,
                   v2
                 ]
               }
@@ -378,5 +429,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8ceb808a4ff9b707a4002594db961e9e';
+(node/*: any*/).hash = 'c210099b94deefbf7e0cd4c7baf6b1e9';
 module.exports = node;
