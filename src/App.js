@@ -199,7 +199,7 @@ class App extends Component {
           return (
             <Content>
               <Summary>
-                <Title center>{props.artist.name}</Title>
+                <Title textAlign="center">{props.artist.name}</Title>
                 <Description>
                   <Picture
                     src={props.artist.image.url}
@@ -225,7 +225,7 @@ class App extends Component {
 
               <Section>
                 {/* @TODO: kind support */}
-                <Title small>Albums</Title>
+                <Title size="small">Albums</Title>
                 <Collection>
                   {props.artist.albums.nodes.map(album => (
                     <Disc key={album.id}>
